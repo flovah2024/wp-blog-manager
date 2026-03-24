@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WP Blog Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e0e0e0;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .table-row:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .modal-overlay {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .badge-draft {
+            background: rgba(107, 114, 128, 0.3);
+            color: #d1d5db;
+            border: 1px solid rgba(107, 114, 128, 0.5);
+        }
+
+        .badge-ready {
+            background: rgba(234, 179, 8, 0.2);
+            color: #fcd34d;
+            border: 1px solid rgba(234, 179, 8, 0.4);
+        }
+
+        .badge-published {
+            background: rgba(34, 197, 94, 0.2);
+            color: #86efac;
+            border: 1px solid rgba(34, 197, 94, 0.4);
+        }
+
+        .loading-spinner {
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .input-field {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #e0e0e0;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(59, 130, 246, 0.5);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .tag {
+            background: rgba(139, 92, 246, 0.2);
+            border: 1px solid rgba(139, 92, 246, 0.4);
+            color: #c4b5fd;
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin: 4px 4px 4px 0;
+        }
+
+        .header-gradient {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        }
+
+        .text-truncate {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="min-h-screen py-8 px-4">
+        <!-- Header -->
+        <div class="mb-8">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex items-center justify-between mb-8">
+                    <div class="flex items-center gap-3">
+                        <div class="header-gradient rounded-lg p-3">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h1 class="text-3xl font-bold text-white">WP Blog Manager</h1>
+                            <p class="text-sm text-gray-400">ë¸ë¡ê·¸ ê¸ ê´ë¦¬ ëìë³´ë</p>
+                        </div>
+                    </div>
+                    <button id="settingsBtn" class="p-3 rounded-lg card hover:bg-opacity-20 transition">
+                        <svg class="w-6 h-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="card stat-card p-6">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-400 text-sm font-medium">ì ì²´ ê¸ ì</p>
+                                <p class="text-3xl font-bold text-white mt-2" id="totalCount">0</p>
+                            </div>
+                            <svg class="w-10 h-10 text-blue-400 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="card stat-card p-6">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-400 text-sm font-medium">ë°íë¨</p>
+                                <p class="text-3xl font-bold text-green-400 mt-2" id="publishedCount">0</p>
+                            </div>
+                            <svg class="w-10 h-10 text-green-400 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="card stat-card p-6">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-400 text-sm font-medium">ì´ì</p>
+                                <p class="text-3xl font-bold text-gray-400 mt-2" id="draftCount">0</p>
+                            </div>
+                            <svg class="w-10 h-10 text-gray-400 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="card stat-card p-6">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-400 text-sm font-medium">ì´ë² ë¬ ë°í</p>
+                                <p class="text-3xl font-bold text-yellow-400 mt-2" id="monthCount">0</p>
+                            </div>
+                            <svg class="w-10 h-10 text-yellow-400 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="max-w-7xl mx-auto">
+            <!-- Search and Filters -->
+            <div class="card p-6 mb-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="md:col-span-2">
+                        <label class="text-sm text-gray-400 block mb-2">ê°ì</label>
+                        <input type="text" id="searchInput" placeholder="ì ëª©ì¼ë¡ ê²ì..." class="input-field w-full px-4 py-3 rounded-lg">
+                    </div>
+                    <div>
+                        <label class="text-sm text-gray-400 block mb-2">ìí</label>
+                        <select id="statusFilter" class="input-field w-full px-4 py-3 rounded-lg">
+                            <option value="">ëª¨ë  ìí</option>
+                            <option value="draft">ì´ì</option>
+                            <option value="ready">ì¤ë¹ ìë£</option>
+                            <option value="published">ë°íë¨</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Articles Table -->
+            <div class="card overflow-hidden">
+                <div class="p-6 border-b border-gray-700">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-xl font-bold text-white">ë¸ë¡ê·¸ ê¸ ëª©ë¡</h2>
+                        <span id="articlesCount" class="text-sm text-gray-400">0ê°</span>
+                    </div>
+                </div>
+
+                <!-- Loading State -->
+                <div id="loadingState" class="p-12 flex justify-center items-center">
+                    <div class="loading-spinner"></div>
+                </div>
+
+                <!-- Empty State -->
+                <div id="emptyState" class="p-12 text-center hidden">
+                    <svg class="w-16 h-16 text-gray-500 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <p class="text-gray-400">íìí  ê¸ì´ ììµëë¤.</p>
+                </div>
+
+                <!-- Articles List -->
+                <div id="articlesContainer" class="overflow-x-auto hidden">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b border-gray-700 bg-rgba(255, 255, 255, 0.02)">
+                                <th class="text-left px-6 py-4 font-semibold text-gray-300">ì ëª©</th>
+                                <th class="text-left px-6 py-4 font-semibold text-gray-300">í¤ìë</th>
+                                <th class="text-center px-6 py-4 font-semibold text-gray-300">ìí</th>
+                                <th class="text-center px-6 py-4 font-semibold text-gray-300">ìì±ì¼</th>
+                                <th class="text-center px-6 py-4 font-semibold text-gray-300">ë°íì¼</th>
+                                <th class="text-center px-6 py-4 font-semibold text-gray-300">ìì</th>
+                            </tr>
+                        </thead>
+                        <tbody id="articlesTable">
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Error State -->
+                <div id="errorState" class="p-12 text-center hidden">
+                    <svg class="w-16 h-16 text-red-400 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4v.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <p class="text-red-400 mb-4" id="errorMessage">ë°ì´í°ë¥¼ ë¶ë¬ì¬ ì ììµëë¤.</p>
+                    <button onclick="app.loadArticles()" class="btn-primary text-white px-4 py-2 rounded-lg">ë¤ì ìë</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal-overlay fixed inset-0 hidden flex items-center justify-center p-4 z-50">
+        <div class="modal-content rounded-xl max-w-md w-full p-8 fade-in">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-white">ì¤ì </h3>
+                <button onclick="app.closeSettings()" class="text-gray-400 hover:text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="text-sm text-gray-400 block mb-2">GitHub ë í¬ ì£¼ì¸</label>
+                    <input type="text" id="ownerInput" class="input-field w-full px-4 py-2 rounded-lg" placeholder="flovah2024">
+                </div>
+                <div>
+                    <label class="text-sm text-gray-400 block mb-2">GitHub ë í¬ ì´ë¦</label>
+                    <input type="text" id="repoInput" class="input-field w-full px-4 py-2 rounded-lg" placeholder="wp-blog-manager">
+                </div>
+                <div>
+                    <label class="text-sm text-gray-400 block mb-2">GitHub Personal Access Token (ì íì¬í­)</label>
+                    <input type="password" id="tokenInput" class="input-field w-full px-4 py-2 rounded-lg" placeholder="ghp_...">
+                    <p class="text-xs text-gray-500 mt-1">ìí ë³ê²½ì ìí´ íìí©ëë¤.</p>
+                </div>
+            </div>
+
+            <div class="flex gap-3 mt-8">
+                <button onclick="app.closeSettings()" class="flex-1 px-4 py-2 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700 transition">ì·¨ì</button>
+                <button onclick="app.saveSettings()" class="flex-1 btn-primary text-white px-4 py-2 rounded-lg">ì ì¥</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Article Detail Modal -->
+    <div id="detailModal" class="modal-overlay fixed inset-0 hidden flex items-center justify-center p-4 z-50">
+        <div class="modal-content rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-8 fade-in">
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <h3 class="text-2xl font-bold text-white" id="detailTitle"></h3>
+                    <p class="text-sm text-gray-400 mt-1" id="detailFileName"></p>
+                </div>
+                <button onclick="app.closeDetail()" class="text-gray-400 hover:text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="space-y-6">
+                <!-- Status Badge -->
+                <div>
+                    <p class="text-sm text-gray-400 mb-2">ìí</p>
+                    <span id="detailStatusBadge" class="inline-block px-4 py-2 rounded-full text-sm font-medium"></span>
+                </div>
+
+                <!-- Image Preview -->
+                <div id="imagePreviewContainer" class="hidden">
+                    <p class="text-sm text-gray-400 mb-2">ì´ë¯¸ì§</p>
+                    <img id="imagePreview" src="" alt="Preview" class="w-full rounded-lg max-h-64 object-cover">
+                </div>
+
+                <!-- Keywords -->
+                <div id="keywordsContainer" class="hidden">
+                    <p class="text-sm text-gray-400 mb-3">í¤ìë</p>
+                    <div id="keywordsList" class="flex flex-wrap gap-2"></div>
+                </div>
+
+                <!-- Content Preview -->
+                <div>
+                    <p class="text-sm text-gray-400 mb-2">ë³¸ë¬¸ ë¯¸ë¦¬ë³´ê¸°</p>
+                    <div class="bg-black bg-opacity-40 rounded-lg p-4 max-h-48 overflow-y-auto">
+                        <p id="contentPreview" class="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap"></p>
+                    </div>
+                </div>
+
+                <!-- Metadata -->
+                <div class="grid grid-cols-2 gap-4 p-4 bg-black bg-opacity-40 rounded-lg">
+                    <div>
+                        <p class="text-xs text-gray-500">ìì±ì¼</p>
+                        <p class="text-white font-medium" id="detailCreatedDate">-</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500">ë°íì¼</p>
+                        <p class="text-white font-medium" id="detailPublishedDate">-</p>
+                    </div>
+                </div>
+
+                <!-- Status Change Buttons -->
+                <div class="grid grid-cols-3 gap-3" id="statusButtonsContainer">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const app = {
+            // State
+            state: {
+                owner: 'flovah2024',
+                repo: 'wp-blog-manager',
+                token: null,
+                articles: [],
+                filteredArticles: [],
+                currentArticle: null,
+                searchQuery: '',
+                statusFilter: ''
+            },
+
+            // Initialize
+            init() {
+                this.loadSettings();
+                this.setupEventListeners();
+                this.loadArticles();
+            },
+
+            // Setup Event Listeners
+            setupEventListeners() {
+                document.getElementById('settingsBtn').addEventListener('click', () => this.openSettings());
+                document.getElementById('searchInput').addEventListener('input', () => this.filterArticles());
+                document.getElementById('statusFilter').addEventListener('change', () => this.filterArticles());
+            },
+
+            // Load Settings from Session Storage
+            loadSettings() {
+                const owner = sessionStorage.getItem('wp_owner');
+                const repo = sessionStorage.getItem('wp_repo');
+                const token = sessionStorage.getItem('wp_token');
+
+                if (owner) this.state.owner = owner;
+                if (repo) this.state.repo = repo;
+                if (token) this.state.token = token;
+            },
+
+            // Save Settings
+            saveSettings() {
+                const owner = document.getElementById('ownerInput').value || this.state.owner;
+                const repo = document.getElementById('repoInput').value || this.state.repo;
+                const token = document.getElementById('tokenInput').value || null;
+
+                sessionStorage.setItem('wp_owner', owner);
+                sessionStorage.setItem('wp_repo', repo);
+                if (token) sessionStorage.setItem('wp_token', token);
+
+                this.state.owner = owner;
+                this.state.repo = repo;
+                this.state.token = token;
+
+                this.closeSettings();
+                this.loadArticles();
+            },
+
+            // Open Settings Modal
+            openSettings() {
+                const modal = document.getElementById('settingsModal');
+                document.getElementById('ownerInput').value = this.state.owner;
+                document.getElementById('repoInput').value = this.state.repo;
+                document.getElementById('tokenInput').value = this.state.token || '';
+                modal.classList.remove('hidden');
+            },
+
+            // Close Settings Modal
+            closeSettings() {
+                document.getElementById('settingsModal').classList.add('hidden');
+            },
+
+            // Load Articles from GitHub
+            async loadArticles() {
+                try {
+                    this.showLoading();
+                    const url = `https://api.github.com/repos/${this.state.owner}/${this.state.repo}/contents/articles`;
+                    const headers = {};
+
+                    if (this.state.token) {
+                        headers['Authorization'] = `token ${this.state.token}`;
+                    }
+
+                    const response = await fetch(url, { headers });
+
+                    if (!response.ok) {
+                        throw new Error(`GitHub API error: ${response.status}`);
+                    }
+
+                    const files = await response.json();
+                    if (!Array.isArray(files)) {
+                        throw new Error('Invalid API response');
+                    }
+
+                    this.state.articles = [];
+
+                    for (const file of files) {
+                        if (file.name.endsWith('.json')) {
+                            try {
+                                const contentResponse = await fetch(file.download_url);
+                                const articleData = await contentResponse.json();
+
+                                this.state.articles.push({
+                                    id: file.name,
+                                    ...articleData
+                                });
+                            } catch (error) {
+                                console.error(`Failed to load ${file.name}:`, error);
+                            }
+                        }
+                    }
+
+                    this.state.articles.sort((a, b) => new Date(b.created_date || 0) - new Date(a.created_date || 0));
+                    this.filterArticles();
+                    this.updateStats();
+                    this.hideLoading();
+                } catch (error) {
+                    console.error('Error loading articles:', error);
+                    this.showError(error.message);
+                }
+            },
+
+            // Filter Articles
+            filterArticles() {
+                this.state.searchQuery = document.getElementById('searchInput').value.toLowerCase();
+                this.state.statusFilter = document.getElementById('statusFilter').value;
+
+                this.state.filteredArticles = this.state.articles.filter(article => {
+                    const matchesSearch = !this.state.searchQuery ||
+                        (article.title && article.title.toLowerCase().includes(this.state.searchQuery)) ||
+                        (article.keywords && article.keywords.join(' ').toLowerCase().includes(this.state.searchQuery));
+
+                    const matchesStatus = !this.state.statusFilter || article.status === this.state.statusFilter;
+
+                    return matchesSearch && matchesStatus;
+                });
+
+                this.renderArticles();
+            },
+
+            // Render Articles
+            renderArticles() {
+                const container = document.getElementById('articlesContainer');
+                const table = document.getElementById('articlesTable');
+                const empty = document.getElementById('emptyState');
+                const count = document.getElementById('articlesCount');
+
+                count.textContent = `${this.state.filteredArticles.length}ê°`;
+
+                if (this.state.filteredArticles.length === 0) {
+                    container.classList.add('hidden');
+                    empty.classList.remove('hidden');
+                    return;
+                }
+
+                container.classList.remove('hidden');
+                empty.classList.add('hidden');
+                table.innerHTML = '';
+
+                this.state.filteredArticles.forEach(article => {
+                    const row = this.createTableRow(article);
+                    table.appendChild(row);
+                });
+            },
+
+            // Create Table Row
+            createTableRow(article) {
+                const row = document.createElement('tr');
+                row.className = 'table-row border-b border-gray-700 transition cursor-pointer';
+
+                const statusBadge = this.getStatusBadge(article.status);
+                const keywords = (article.keywords || []).slice(0, 2).map(k => `<span class="tag">${k}</span>`).join('');
+                const createdDate = article.created_date ? new Date(article.created_date).toISOString().split('T')[0] : '-';
+                const publishedDate = article.published_date ? new Date(article.published_date).toISOString().split('T')[0] : '-';
+
+                row.innerHTML = `
+                    <td class="px-6 py-4">
+                        <div class="text-white font-medium text-truncate max-w-xs">${this.escapeHtml(article.title || 'Untitled')}</div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex gap-1 flex-wrap">${keywords || '<span class="text-gray-500 text-sm">ìì</span>'}</div>
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        ${statusBadge}
+                    </td>
+                    <td class="px-6 py-4 text-center text-gray-400 text-sm">${createdDate}</td>
+                    <td class="px-6 py-4 text-center text-gray-400 text-sm">${publishedDate || '-'}</td>
+                    <td class="px-6 py-4 text-center">
+                        <button class="text-blue-400 hover:text-blue-300 text-sm font-medium">ìì¸ë³´ê¸°</button>
+                    </td>
+                `;
+
+                row.addEventListener('click', () => this.openDetail(article));
+                return row;
+            },
+
+            // Get Status Badge HTML
+            getStatusBadge(status) {
+                const statusMap = {
+                    draft: { text: 'ì´ì', class: 'badge-draft' },
+                    ready: { text: 'ì¤ë¹ ìë£', class: 'badge-ready' },
+                    published: { text: 'ë°íë¨', class: 'badge-published' }
+                };
+
+                const s = statusMap[status] || { text: status, class: 'badge-draft' };
+                return `<span class="badge ${s.class} px-3 py-1 rounded-full text-xs font-medium">${s.text}</span>`;
+            },
+
+            // Open Detail Modal
+            openDetail(article) {
+                this.state.currentArticle = article;
+                const modal = document.getElementById('detailModal');
+
+                document.getElementById('detailTitle').textContent = article.title || 'Untitled';
+                document.getElementById('detailFileName').textContent = article.id;
+                document.getElementById('detailStatusBadge').innerHTML = this.getStatusBadge(article.status);
+
+                // Image
+                if (article.image) {
+                    document.getElementById('imagePreview').src = article.image;
+                    document.getElementById('imagePreviewContainer').classList.remove('hidden');
+                } else {
+                    document.getElementById('imagePreviewContainer').classList.add('hidden');
+                }
+
+                // Keywords
+                if (article.keywords && article.keywords.length > 0) {
+                    const keywordsList = article.keywords.map(k => `<span class="tag">${this.escapeHtml(k)}</span>`).join('');
+                    document.getElementById('keywordsList').innerHTML = keywordsList;
+                    document.getElementById('keywordsContainer').classList.remove('hidden');
+                } else {
+                    document.getElementById('keywordsContainer').classList.add('hidden');
+                }
+
+                // Content
+                document.getElementById('contentPreview').textContent = (article.content || 'ë´ì©ì´ ììµëë¤.').substring(0, 500);
+
+                // Dates
+                document.getElementById('detailCreatedDate').textContent = article.created_date ? new Date(article.created_date).toISOString().split('T')[0] : '-';
+                document.getElementById('detailPublishedDate').textContent = article.published_date ? new Date(article.published_date).toISOString().split('T')[0] : '-';
+
+                // Status buttons
+                this.renderStatusButtons();
+
+                modal.classList.remove('hidden');
+            },
+
+            // Render Status Buttons
+            renderStatusButtons() {
+                const container = document.getElementById('statusButtonsContainer');
+                const current = this.state.currentArticle.status;
+
+                const buttons = [
+                    { status: 'draft', label: 'ì´ì', disabled: current === 'draft' },
+                    { status: 'ready', label: 'ì¤ë¹ ìë£', disabled: current === 'ready' },
+                    { status: 'published', label: 'ë°í', disabled: current === 'published' }
+                ];
+
+                container.innerHTML = buttons.map(btn => `
+                    <button
+                        onclick="app.changeStatus('${btn.status}')"
+                        ${btn.disabled ? 'disabled' : ''}
+                        class="px-4 py-2 rounded-lg text-sm font-medium transition ${
+                            btn.disabled
+                                ? 'bg-gray-700 text-gray-500 cursor-not-allowed'
+                                : 'btn-primary text-white hover:opacity-90'
+                        }"
+                    >
+                        ${btn.label}
+                    </button>
+                `).join('');
+            },
+
+            // Change Status
+            async changeStatus(newStatus) {
+                if (!this.state.token) {
+                    alert('ìíë¥¼ ë³ê²½ì¼íë ¤ë© GitHub Tokenì ì¤ì í´ì£¼ì¸ì.');
+                    return;
+                }
+
+                try {
+                    // For demonstration, we'll update locally
+                    // In production, you would need to commit to GitHub
+                    this.state.currentArticle.status = newStatus;
+                    if (newStatus === 'published' && !this.state.currentArticle.published_date) {
+                        this.state.currentArticle.published_date = new Date().toISOString();
+                    }
+
+                    this.renderStatusButtons();
+                    this.filterArticles();
+                    this.updateStats();
+
+                    alert('ìíê° ë³ê²½ëììµëë¤. (ë¡ì»¬ ì ì¥)');
+                } catch (error) {
+                    alert('ìí ë³ê²½ì ì¤í¨íìµëë¤: ' + error.message);
+                }
+            },
+
+            // Close Detail Modal
+            closeDetail() {
+                document.getElementById('detailModal').classList.add('hidden');
+                this.state.currentArticle = null;
+            },
+
+            // Update Stats
+            updateStats() {
+                const now = new Date();
+                const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+
+                document.getElementById('totalCount').textContent = this.state.articles.length;
+                document.getElementById('publishedCount').textContent = this.state.articles.filter(a => a.status === 'published').length;
+                document.getElementById('draftCount').textContent = this.state.articles.filter(a => a.status === 'draft').length;
+                document.getElementById('monthCount').textContent = this.state.articles.filter(a => {
+                    if (a.published_date) {
+                        return a.published_date.startsWith(currentMonth);
+                    }
+                    return false;
+                }).length;
+            },
+
+            // Show Loading
+            showLoading() {
+                document.getElementById('loadingState').classList.remove('hidden');
+                document.getElementById('articlesContainer').classList.add('hidden');
+                document.getElementById('emptyState').classList.add('hidden');
+                document.getElementById('errorState').classList.add('hidden');
+            },
+
+            // Hide Loading
+            hideLoading() {
+                document.getElementById('loadingState').classList.add('hidden');
+            },
+
+            // Show Error
+            showError(message) {
+                document.getElementById('loadingState').classList.add('hidden');
+                document.getElementById('articlesContainer').classList.add('hidden');
+                document.getElementById('emptyState').classList.add('hidden');
+                document.getElementById('errorState').classList.remove('hidden');
+                document.getElementById('errorMessage').textContent = message || 'ë°ì´í°ë¥¼ ë¶ë¬ì¬ ì ììµëë¤.';
+            },
+
+            // Escape HTML
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        };
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => app.init());
+    </script>
+</body>
+</html>
