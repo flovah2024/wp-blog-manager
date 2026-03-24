@@ -1,0 +1,11 @@
+{
+  "wordpress": {
+    "site": "focussssss.wordpress.com",
+    "api_base": "https://public-api.wordpress.com/wp/v2/sites/focussssss.wordpress.com"
+  },
+  "defaults": {
+    "post_status": "publish",
+    "comment_status": "open",
+    "ping_status": "open"
+  }
+}
