@@ -143,7 +143,7 @@
                         </div>
                         <div>
                             <h1 class="text-3xl font-bold text-white">WP Blog Manager</h1>
-                            <p class="text-sm text-gray-400">ë¸ë¡ê·¸ ê¸ ê´ë¦¬ ëìë³´ë</p>
+                            <p class="text-sm text-gray-400">블로그 글 관리 대시보드</p>
                         </div>
                     </div>
                     <button id="settingsBtn" class="p-3 rounded-lg card hover:bg-opacity-20 transition">
@@ -159,7 +159,7 @@
                     <div class="card stat-card p-6">
                         <div class="flex justify-between items-start">
                             <div>
-                                <p class="text-gray-400 text-sm font-medium">ì ì²´ ê¸ ì</p>
+                                <p class="text-gray-400 text-sm font-medium">전체 글 수</p>
                                 <p class="text-3xl font-bold text-white mt-2" id="totalCount">0</p>
                             </div>
                             <svg class="w-10 h-10 text-blue-400 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -170,7 +170,7 @@
                     <div class="card stat-card p-6">
                         <div class="flex justify-between items-start">
                             <div>
-                                <p class="text-gray-400 text-sm font-medium">ë°íë¨</p>
+                                <p class="text-gray-400 text-sm font-medium">발행됨</p>
                                 <p class="text-3xl font-bold text-green-400 mt-2" id="publishedCount">0</p>
                             </div>
                             <svg class="w-10 h-10 text-green-400 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -181,7 +181,7 @@
                     <div class="card stat-card p-6">
                         <div class="flex justify-between items-start">
                             <div>
-                                <p class="text-gray-400 text-sm font-medium">ì´ì</p>
+                                <p class="text-gray-400 text-sm font-medium">초안</p>
                                 <p class="text-3xl font-bold text-gray-400 mt-2" id="draftCount">0</p>
                             </div>
                             <svg class="w-10 h-10 text-gray-400 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -192,7 +192,7 @@
                     <div class="card stat-card p-6">
                         <div class="flex justify-between items-start">
                             <div>
-                                <p class="text-gray-400 text-sm font-medium">ì´ë² ë¬ ë°í</p>
+                                <p class="text-gray-400 text-sm font-medium">이번 달 발행</p>
                                 <p class="text-3xl font-bold text-yellow-400 mt-2" id="monthCount">0</p>
                             </div>
                             <svg class="w-10 h-10 text-yellow-400 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -210,16 +210,16 @@
             <div class="card p-6 mb-8">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div class="md:col-span-2">
-                        <label class="text-sm text-gray-400 block mb-2">ê°ì</label>
-                        <input type="text" id="searchInput" placeholder="ì ëª©ì¼ë¡ ê²ì..." class="input-field w-full px-4 py-3 rounded-lg">
+                        <label class="text-sm text-gray-400 block mb-2">검색</label>
+                        <input type="text" id="searchInput" placeholder="제목으로 검색..." class="input-field w-full px-4 py-3 rounded-lg">
                     </div>
                     <div>
-                        <label class="text-sm text-gray-400 block mb-2">ìí</label>
+                        <label class="text-sm text-gray-400 block mb-2">상태</label>
                         <select id="statusFilter" class="input-field w-full px-4 py-3 rounded-lg">
-                            <option value="">ëª¨ë  ìí</option>
-                            <option value="draft">ì´ì</option>
-                            <option value="ready">ì¤ë¹ ìë£</option>
-                            <option value="published">ë°íë¨</option>
+                            <option value="">모든 상태</option>
+                            <option value="draft">초안</option>
+                            <option value="ready">준비 완료</option>
+                            <option value="published">발행됨</option>
                         </select>
                     </div>
                 </div>
@@ -229,8 +229,8 @@
             <div class="card overflow-hidden">
                 <div class="p-6 border-b border-gray-700">
                     <div class="flex justify-between items-center">
-                        <h2 class="text-xl font-bold text-white">ë¸ë¡ê·¸ ê¸ ëª©ë¡</h2>
-                        <span id="articlesCount" class="text-sm text-gray-400">0ê°</span>
+                        <h2 class="text-xl font-bold text-white">블로그 글 목록</h2>
+                        <span id="articlesCount" class="text-sm text-gray-400">0개</span>
                     </div>
                 </div>
 
@@ -244,7 +244,7 @@
                     <svg class="w-16 h-16 text-gray-500 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                     </svg>
-                    <p class="text-gray-400">íìí  ê¸ì´ ììµëë¤.</p>
+                    <p class="text-gray-400">표시할 글이 없습니다.</p>
                 </div>
 
                 <!-- Articles List -->
@@ -252,12 +252,12 @@
                     <table class="w-full">
                         <thead>
                             <tr class="border-b border-gray-700 bg-rgba(255, 255, 255, 0.02)">
-                                <th class="text-left px-6 py-4 font-semibold text-gray-300">ì ëª©</th>
-                                <th class="text-left px-6 py-4 font-semibold text-gray-300">í¤ìë</th>
-                                <th class="text-center px-6 py-4 font-semibold text-gray-300">ìí</th>
-                                <th class="text-center px-6 py-4 font-semibold text-gray-300">ìì±ì¼</th>
-                                <th class="text-center px-6 py-4 font-semibold text-gray-300">ë°íì¼</th>
-                                <th class="text-center px-6 py-4 font-semibold text-gray-300">ìì</th>
+                                <th class="text-left px-6 py-4 font-semibold text-gray-300">제목</th>
+                                <th class="text-left px-6 py-4 font-semibold text-gray-300">키워드</th>
+                                <th class="text-center px-6 py-4 font-semibold text-gray-300">상태</th>
+                                <th class="text-center px-6 py-4 font-semibold text-gray-300">작성일</th>
+                                <th class="text-center px-6 py-4 font-semibold text-gray-300">발행일</th>
+                                <th class="text-center px-6 py-4 font-semibold text-gray-300">작업</th>
                             </tr>
                         </thead>
                         <tbody id="articlesTable">
@@ -270,8 +270,8 @@
                     <svg class="w-16 h-16 text-red-400 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4v.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
-                    <p class="text-red-400 mb-4" id="errorMessage">ë°ì´í°ë¥¼ ë¶ë¬ì¬ ì ììµëë¤.</p>
-                    <button onclick="app.loadArticles()" class="btn-primary text-white px-4 py-2 rounded-lg">ë¤ì ìë</button>
+                    <p class="text-red-400 mb-4" id="errorMessage">데이터를 불러올 수 없습니다.</p>
+                    <button onclick="app.loadArticles()" class="btn-primary text-white px-4 py-2 rounded-lg">다시 시도</button>
                 </div>
             </div>
         </div>
@@ -281,7 +281,7 @@
     <div id="settingsModal" class="modal-overlay fixed inset-0 hidden flex items-center justify-center p-4 z-50">
         <div class="modal-content rounded-xl max-w-md w-full p-8 fade-in">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-bold text-white">ì¤ì </h3>
+                <h3 class="text-2xl font-bold text-white">설정</h3>
                 <button onclick="app.closeSettings()" class="text-gray-400 hover:text-white">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -291,23 +291,23 @@
 
             <div class="space-y-4">
                 <div>
-                    <label class="text-sm text-gray-400 block mb-2">GitHub ë í¬ ì£¼ì¸</label>
+                    <label class="text-sm text-gray-400 block mb-2">GitHub 레포 주인</label>
                     <input type="text" id="ownerInput" class="input-field w-full px-4 py-2 rounded-lg" placeholder="flovah2024">
                 </div>
                 <div>
-                    <label class="text-sm text-gray-400 block mb-2">GitHub ë í¬ ì´ë¦</label>
+                    <label class="text-sm text-gray-400 block mb-2">GitHub 레포 이름</label>
                     <input type="text" id="repoInput" class="input-field w-full px-4 py-2 rounded-lg" placeholder="wp-blog-manager">
                 </div>
                 <div>
-                    <label class="text-sm text-gray-400 block mb-2">GitHub Personal Access Token (ì íì¬í­)</label>
+                    <label class="text-sm text-gray-400 block mb-2">GitHub Personal Access Token (선택사항)</label>
                     <input type="password" id="tokenInput" class="input-field w-full px-4 py-2 rounded-lg" placeholder="ghp_...">
-                    <p class="text-xs text-gray-500 mt-1">ìí ë³ê²½ì ìí´ íìí©ëë¤.</p>
+                    <p class="text-xs text-gray-500 mt-1">상태 변경을 위해 필요합니다.</p>
                 </div>
             </div>
 
             <div class="flex gap-3 mt-8">
-                <button onclick="app.closeSettings()" class="flex-1 px-4 py-2 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700 transition">ì·¨ì</button>
-                <button onclick="app.saveSettings()" class="flex-1 btn-primary text-white px-4 py-2 rounded-lg">ì ì¥</button>
+                <button onclick="app.closeSettings()" class="flex-1 px-4 py-2 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700 transition">취소</button>
+                <button onclick="app.saveSettings()" class="flex-1 btn-primary text-white px-4 py-2 rounded-lg">저장</button>
             </div>
         </div>
     </div>
@@ -330,25 +330,25 @@
             <div class="space-y-6">
                 <!-- Status Badge -->
                 <div>
-                    <p class="text-sm text-gray-400 mb-2">ìí</p>
+                    <p class="text-sm text-gray-400 mb-2">상태</p>
                     <span id="detailStatusBadge" class="inline-block px-4 py-2 rounded-full text-sm font-medium"></span>
                 </div>
 
                 <!-- Image Preview -->
                 <div id="imagePreviewContainer" class="hidden">
-                    <p class="text-sm text-gray-400 mb-2">ì´ë¯¸ì§</p>
+                    <p class="text-sm text-gray-400 mb-2">이미지</p>
                     <img id="imagePreview" src="" alt="Preview" class="w-full rounded-lg max-h-64 object-cover">
                 </div>
 
                 <!-- Keywords -->
                 <div id="keywordsContainer" class="hidden">
-                    <p class="text-sm text-gray-400 mb-3">í¤ìë</p>
+                    <p class="text-sm text-gray-400 mb-3">키워드</p>
                     <div id="keywordsList" class="flex flex-wrap gap-2"></div>
                 </div>
 
                 <!-- Content Preview -->
                 <div>
-                    <p class="text-sm text-gray-400 mb-2">ë³¸ë¬¸ ë¯¸ë¦¬ë³´ê¸°</p>
+                    <p class="text-sm text-gray-400 mb-2">본문 미리보기</p>
                     <div class="bg-black bg-opacity-40 rounded-lg p-4 max-h-48 overflow-y-auto">
                         <p id="contentPreview" class="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap"></p>
                     </div>
@@ -357,11 +357,11 @@
                 <!-- Metadata -->
                 <div class="grid grid-cols-2 gap-4 p-4 bg-black bg-opacity-40 rounded-lg">
                     <div>
-                        <p class="text-xs text-gray-500">ìì±ì¼</p>
+                        <p class="text-xs text-gray-500">작성일</p>
                         <p class="text-white font-medium" id="detailCreatedDate">-</p>
                     </div>
                     <div>
-                        <p class="text-xs text-gray-500">ë°íì¼</p>
+                        <p class="text-xs text-gray-500">발행일</p>
                         <p class="text-white font-medium" id="detailPublishedDate">-</p>
                     </div>
                 </div>
@@ -519,7 +519,7 @@
                 const empty = document.getElementById('emptyState');
                 const count = document.getElementById('articlesCount');
 
-                count.textContent = `${this.state.filteredArticles.length}ê°`;
+                count.textContent = `${this.state.filteredArticles.length}개`;
 
                 if (this.state.filteredArticles.length === 0) {
                     container.classList.add('hidden');
@@ -552,7 +552,7 @@
                         <div class="text-white font-medium text-truncate max-w-xs">${this.escapeHtml(article.title || 'Untitled')}</div>
                     </td>
                     <td class="px-6 py-4">
-                        <div class="flex gap-1 flex-wrap">${keywords || '<span class="text-gray-500 text-sm">ìì</span>'}</div>
+                        <div class="flex gap-1 flex-wrap">${keywords || '<span class="text-gray-500 text-sm">없음</span>'}</div>
                     </td>
                     <td class="px-6 py-4 text-center">
                         ${statusBadge}
@@ -560,7 +560,7 @@
                     <td class="px-6 py-4 text-center text-gray-400 text-sm">${createdDate}</td>
                     <td class="px-6 py-4 text-center text-gray-400 text-sm">${publishedDate || '-'}</td>
                     <td class="px-6 py-4 text-center">
-                        <button class="text-blue-400 hover:text-blue-300 text-sm font-medium">ìì¸ë³´ê¸°</button>
+                        <button class="text-blue-400 hover:text-blue-300 text-sm font-medium">상세보기</button>
                     </td>
                 `;
 
@@ -571,9 +571,9 @@
             // Get Status Badge HTML
             getStatusBadge(status) {
                 const statusMap = {
-                    draft: { text: 'ì´ì', class: 'badge-draft' },
-                    ready: { text: 'ì¤ë¹ ìë£', class: 'badge-ready' },
-                    published: { text: 'ë°íë¨', class: 'badge-published' }
+                    draft: { text: '초안', class: 'badge-draft' },
+                    ready: { text: '준비 완료', class: 'badge-ready' },
+                    published: { text: '발행됨', class: 'badge-published' }
                 };
 
                 const s = statusMap[status] || { text: status, class: 'badge-draft' };
@@ -607,7 +607,7 @@
                 }
 
                 // Content
-                document.getElementById('contentPreview').textContent = (article.content || 'ë´ì©ì´ ììµëë¤.').substring(0, 500);
+                document.getElementById('contentPreview').textContent = (article.content || '내용이 없습니다.').substring(0, 500);
 
                 // Dates
                 document.getElementById('detailCreatedDate').textContent = article.created_date ? new Date(article.created_date).toISOString().split('T')[0] : '-';
@@ -625,9 +625,9 @@
                 const current = this.state.currentArticle.status;
 
                 const buttons = [
-                    { status: 'draft', label: 'ì´ì', disabled: current === 'draft' },
-                    { status: 'ready', label: 'ì¤ë¹ ìë£', disabled: current === 'ready' },
-                    { status: 'published', label: 'ë°í', disabled: current === 'published' }
+                    { status: 'draft', label: '초안', disabled: current === 'draft' },
+                    { status: 'ready', label: '준비 완료', disabled: current === 'ready' },
+                    { status: 'published', label: '발행', disabled: current === 'published' }
                 ];
 
                 container.innerHTML = buttons.map(btn => `
@@ -648,7 +648,7 @@
             // Change Status
             async changeStatus(newStatus) {
                 if (!this.state.token) {
-                    alert('ìíë¥¼ ë³ê²½ì¼íë ¤ë© GitHub Tokenì ì¤ì í´ì£¼ì¸ì.');
+                    alert('상태를 변겼하려메 GitHub Token을 설정해주세요.');
                     return;
                 }
 
@@ -664,9 +664,9 @@
                     this.filterArticles();
                     this.updateStats();
 
-                    alert('ìíê° ë³ê²½ëììµëë¤. (ë¡ì»¬ ì ì¥)');
+                    alert('상태가 변경되었습니다. (로컬 저장)');
                 } catch (error) {
-                    alert('ìí ë³ê²½ì ì¤í¨íìµëë¤: ' + error.message);
+                    alert('상태 변경에 실패했습니다: ' + error.message);
                 }
             },
 
@@ -711,7 +711,7 @@
                 document.getElementById('articlesContainer').classList.add('hidden');
                 document.getElementById('emptyState').classList.add('hidden');
                 document.getElementById('errorState').classList.remove('hidden');
-                document.getElementById('errorMessage').textContent = message || 'ë°ì´í°ë¥¼ ë¶ë¬ì¬ ì ììµëë¤.';
+                document.getElementById('errorMessage').textContent = message || '데이터를 불러올 수 없습니다.';
             },
 
             // Escape HTML
